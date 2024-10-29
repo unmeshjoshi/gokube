@@ -68,7 +68,7 @@ func PickAvailableRandomPort() (int, error) {
 // StopEmbeddedEtcd stops the embedded etcd server and removes the data directory.
 func StopEmbeddedEtcd(e *embed.Etcd) {
 	e.Close()
-	os.RemoveAll(e.Config().Dir)
+	_ = os.RemoveAll(e.Config().Dir)
 	fmt.Println("Embedded etcd server stopped and data directory removed")
 }
 

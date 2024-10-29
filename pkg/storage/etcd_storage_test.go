@@ -2,182 +2,129 @@ package storage
 
 import (
 	"context"
-	"fmt"
-	"strconv"
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	clientv3 "go.etcd.io/etcd/client/v3"
 
 	"go.etcd.io/etcd/api/v3/mvccpb"
 )
 
 func TestEmbeddedEtcd(t *testing.T) {
-	// Step 1: Start embedded etcd
-	etcdServer, port, err := StartEmbeddedEtcd()
-	if err != nil {
-		t.Fatalf("Failed to start embedded etcd: %v", err)
-	}
-	defer StopEmbeddedEtcd(etcdServer)
+	t.Run("should be able to put and get key", func(t *testing.T) {
+		TestWithEmbeddedEtcd(t, func(t *testing.T, cli *clientv3.Client) {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
 
-	// Step 2: Set up etcd client
-	cli, err := clientv3.New(clientv3.Config{
-		Endpoints:   []string{"http://localhost:" + strconv.Itoa(port)},
-		DialTimeout: 5 * time.Second,
-	})
-	if err != nil {
-		t.Fatalf("Failed to create etcd client: %v", err)
-	}
-	defer cli.Close()
+			_, err := cli.Put(ctx, "test-key", "test-value")
+			assert.NoError(t, err)
 
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
+			resp, err := cli.Get(ctx, "test-key")
+			assert.NoError(t, err)
 
-	// Step 3: Put a key-value pair into etcd
-	_, err = cli.Put(ctx, "test-key", "test-value")
-	if err != nil {
-		t.Fatalf("Failed to put key-value: %v", err)
-	}
-
-	// Step 4: Get the value from etcd
-	resp, err := cli.Get(ctx, "test-key")
-	if err != nil {
-		t.Fatalf("Failed to get key: %v", err)
-	}
-
-	if len(resp.Kvs) != 1 || string(resp.Kvs[0].Value) != "test-value" {
-		t.Fatalf("Expected 'test-value', got '%s'", string(resp.Kvs[0].Value))
-	}
-
-	// Step 5: Verify the value
-	fmt.Printf("Key: %s, Value: %s\n", resp.Kvs[0].Key, resp.Kvs[0].Value)
-
-	// Additional test cases
-	t.Run("UpdateExistingKey", func(t *testing.T) {
-		_, err := cli.Put(ctx, "test-key", "updated-value")
-		if err != nil {
-			t.Fatalf("Failed to update key: %v", err)
-		}
-
-		resp, err := cli.Get(ctx, "test-key")
-		if err != nil {
-			t.Fatalf("Failed to get updated key: %v", err)
-		}
-
-		if string(resp.Kvs[0].Value) != "updated-value" {
-			t.Fatalf("Expected 'updated-value', got '%s'", string(resp.Kvs[0].Value))
-		}
+			assert.Len(t, resp.Kvs, 1)
+			assert.Equal(t, "test-value", string(resp.Kvs[0].Value))
+		})
 	})
 
-	t.Run("DeleteKey", func(t *testing.T) {
-		_, err := cli.Delete(ctx, "test-key")
-		if err != nil {
-			t.Fatalf("Failed to delete key: %v", err)
-		}
+	t.Run("should be able to update existing key", func(t *testing.T) {
+		TestWithEmbeddedEtcd(t, func(t *testing.T, cli *clientv3.Client) {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
 
-		resp, err := cli.Get(ctx, "test-key")
-		if err != nil {
-			t.Fatalf("Failed to get deleted key: %v", err)
-		}
+			_, err := cli.Put(ctx, "test-key", "test-value")
+			assert.NoError(t, err)
 
-		if len(resp.Kvs) != 0 {
-			t.Fatalf("Expected key to be deleted, but it still exists")
-		}
+			_, err = cli.Put(ctx, "test-key", "updated-value")
+			assert.NoError(t, err)
+
+			resp, err := cli.Get(ctx, "test-key")
+			assert.NoError(t, err)
+
+			assert.Equal(t, "updated-value", string(resp.Kvs[0].Value))
+		})
 	})
 
-	t.Run("ListKeys", func(t *testing.T) {
-		// Add multiple keys
-		_, err := cli.Put(ctx, "/prefix/key1", "value1")
-		if err != nil {
-			t.Fatalf("Failed to put key1: %v", err)
-		}
-		_, err = cli.Put(ctx, "/prefix/key2", "value2")
-		if err != nil {
-			t.Fatalf("Failed to put key2: %v", err)
-		}
+	t.Run("should be able to delete key", func(t *testing.T) {
+		TestWithEmbeddedEtcd(t, func(t *testing.T, cli *clientv3.Client) {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
 
-		// List keys with prefix
-		resp, err := cli.Get(ctx, "/prefix/", clientv3.WithPrefix())
-		if err != nil {
-			t.Fatalf("Failed to list keys: %v", err)
-		}
+			_, err := cli.Put(ctx, "test-key", "test-value")
+			assert.NoError(t, err)
 
-		if len(resp.Kvs) != 2 {
-			t.Fatalf("Expected 2 keys, got %d", len(resp.Kvs))
-		}
+			_, err = cli.Delete(ctx, "test-key")
+			assert.NoError(t, err)
+
+			resp, err := cli.Get(ctx, "test-key")
+			assert.NoError(t, err)
+
+			assert.Len(t, resp.Kvs, 0)
+		})
 	})
 
-	t.Run("WatchKey", func(t *testing.T) {
-		watchKey := "/watch-test/key"
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
+	t.Run("should be able to list keys with prefix", func(t *testing.T) {
+		TestWithEmbeddedEtcd(t, func(t *testing.T, cli *clientv3.Client) {
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
 
-		// Start watching the key in a separate goroutine
-		watchChan := cli.Watch(ctx, watchKey)
+			_, err := cli.Put(ctx, "/prefix/key1", "value1")
+			assert.NoError(t, err)
 
-		go func() {
-			time.Sleep(1 * time.Second) // Wait a bit before making changes
-			_, err := cli.Put(ctx, watchKey, "initial-value")
-			if err != nil {
-				t.Errorf("Failed to put initial value: %v", err)
+			_, err = cli.Put(ctx, "/prefix/key2", "value2")
+			assert.NoError(t, err)
+
+			resp, err := cli.Get(ctx, "/prefix/", clientv3.WithPrefix())
+			assert.NoError(t, err)
+
+			assert.Len(t, resp.Kvs, 2)
+		})
+	})
+
+	t.Run("should be able to watch key", func(t *testing.T) {
+		TestWithEmbeddedEtcd(t, func(t *testing.T, cli *clientv3.Client) {
+			watchKey := "/watch-test/key"
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+
+			watchChan := cli.Watch(ctx, watchKey)
+
+			go func() {
+				time.Sleep(1 * time.Second)
+				_, err := cli.Put(ctx, watchKey, "initial-value")
+				assert.NoError(t, err)
+
+				time.Sleep(1 * time.Second)
+				_, err = cli.Put(ctx, watchKey, "updated-value")
+				assert.NoError(t, err)
+
+				time.Sleep(1 * time.Second)
+				_, err = cli.Delete(ctx, watchKey)
+				assert.NoError(t, err)
+			}()
+
+			expectedEvents := []struct {
+				Type  mvccpb.Event_EventType
+				Value string
+			}{
+				{mvccpb.PUT, "initial-value"},
+				{mvccpb.PUT, "updated-value"},
+				{mvccpb.DELETE, ""},
 			}
-			time.Sleep(1 * time.Second)
-			_, err = cli.Put(ctx, watchKey, "updated-value")
-			if err != nil {
-				t.Errorf("Failed to update value: %v", err)
+
+			for _, expected := range expectedEvents {
+				select {
+				case watchResp := <-watchChan:
+					assert.Len(t, watchResp.Events, 1)
+
+					ev := watchResp.Events[0]
+					assert.Equal(t, expected.Type, ev.Type)
+					assert.Equal(t, expected.Value, string(ev.Kv.Value))
+				case <-ctx.Done():
+					t.Fatalf("Watch timed out")
+				}
 			}
-			time.Sleep(1 * time.Second)
-			_, err = cli.Delete(ctx, watchKey)
-			if err != nil {
-				t.Errorf("Failed to delete key: %v", err)
-			}
-		}()
-
-		expectedEvents := []struct {
-			Type  mvccpb.Event_EventType
-			Value string
-		}{
-			{mvccpb.PUT, "initial-value"},
-			{mvccpb.PUT, "updated-value"},
-			{mvccpb.DELETE, ""},
-		}
-
-		for i, expected := range expectedEvents {
-			select {
-			case watchResp := <-watchChan:
-				fmt.Printf("Watch Response %d:\n", i+1)
-				fmt.Printf("  CompactRevision: %d\n", watchResp.CompactRevision)
-				fmt.Printf("  Created: %v\n", watchResp.Created)
-				fmt.Printf("  Canceled: %v\n", watchResp.Canceled)
-				fmt.Printf("  Header: %+v\n", watchResp.Header)
-
-				for j, ev := range watchResp.Events {
-					fmt.Printf("  Event %d:\n", j+1)
-					fmt.Printf("    Type: %v\n", ev.Type)
-					fmt.Printf("    Key: %s\n", string(ev.Kv.Key))
-					fmt.Printf("    Value: %s\n", string(ev.Kv.Value))
-					fmt.Printf("    Version: %d\n", ev.Kv.Version)
-					fmt.Printf("    ModRevision: %d\n", ev.Kv.ModRevision)
-					if ev.PrevKv != nil {
-						fmt.Printf("    PrevValue: %s\n", string(ev.PrevKv.Value))
-						fmt.Printf("    PrevVersion: %d\n", ev.PrevKv.Version)
-					}
-				}
-				fmt.Println()
-
-				if len(watchResp.Events) != 1 {
-					t.Fatalf("Expected 1 event, got %d", len(watchResp.Events))
-				}
-				ev := watchResp.Events[0]
-				if ev.Type != expected.Type {
-					t.Errorf("Event %d: Expected type %v, got %v", i, expected.Type, ev.Type)
-				}
-				if string(ev.Kv.Value) != expected.Value {
-					t.Errorf("Event %d: Expected value '%s', got '%s'", i, expected.Value, string(ev.Kv.Value))
-				}
-			case <-ctx.Done():
-				t.Fatalf("Watch timed out")
-			}
-		}
+		})
 	})
 }
