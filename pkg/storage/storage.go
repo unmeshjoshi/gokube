@@ -2,7 +2,8 @@ package storage
 
 import (
 	"context"
-	"etcdtest/pkg/runtime"
+
+	"gokube/pkg/runtime"
 )
 
 // Storage defines the interface for data storage operations

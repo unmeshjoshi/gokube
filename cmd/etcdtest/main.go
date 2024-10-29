@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"etcdtest/pkg/storage"
+	"gokube/pkg/storage"
 )
 
 func main() {

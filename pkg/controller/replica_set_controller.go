@@ -2,13 +2,14 @@ package controller
 
 import (
 	"context"
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/registry"
-	"etcdtest/pkg/registry/names"
 	"fmt"
 	"log"
 	"strings"
 	"time"
+
+	"gokube/pkg/api"
+	"gokube/pkg/registry"
+	"gokube/pkg/registry/names"
 )
 
 // ReplicaSetController manages the lifecycle of ReplicaSets

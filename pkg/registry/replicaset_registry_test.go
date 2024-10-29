@@ -2,12 +2,12 @@ package registry
 
 import (
 	"context"
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/storage"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gokube/pkg/api"
+	"gokube/pkg/storage"
 )
 
 func createTestReplicaSet(name string, replicas int32, image string) *api.ReplicaSet {

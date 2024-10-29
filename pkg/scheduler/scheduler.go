@@ -2,11 +2,12 @@ package scheduler
 
 import (
 	"context"
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/registry"
 	"fmt"
 	"math/rand"
 	"time"
+
+	"gokube/pkg/api"
+	"gokube/pkg/registry"
 )
 
 type Scheduler struct {

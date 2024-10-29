@@ -2,13 +2,14 @@ package kubelet
 
 import (
 	"context"
-	"etcdtest/pkg/api"
 	"fmt"
 	"testing"
 	"time"
 
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/client"
+
+	"gokube/pkg/api"
 )
 
 func TestStartContainerWithRealDocker(t *testing.T) {

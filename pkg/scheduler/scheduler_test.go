@@ -2,12 +2,13 @@ package scheduler
 
 import (
 	"context"
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/registry"
-	"etcdtest/pkg/storage"
 	"fmt"
 	"testing"
 	"time"
+
+	"gokube/pkg/api"
+	"gokube/pkg/registry"
+	"gokube/pkg/storage"
 
 	clientv3 "go.etcd.io/etcd/client/v3"
 )

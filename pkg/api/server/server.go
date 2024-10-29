@@ -5,11 +5,11 @@ import (
 	"log"
 	"net/http"
 
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/registry"
-	"etcdtest/pkg/storage"
-
 	"github.com/emicklei/go-restful/v3"
+
+	"gokube/pkg/api"
+	"gokube/pkg/registry"
+	"gokube/pkg/storage"
 )
 
 // APIServer represents the API server

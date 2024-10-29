@@ -16,8 +16,8 @@ import (
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.etcd.io/etcd/server/v3/embed"
 
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/storage"
+	"gokube/pkg/api"
+	"gokube/pkg/storage"
 )
 
 func getClientEndpoints(e *embed.Etcd) []string {

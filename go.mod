@@ -1,4 +1,4 @@
-module etcdtest
+module gokube
 
 go 1.23.1
 

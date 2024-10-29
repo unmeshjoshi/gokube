@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"path"
 
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/storage"
+	"gokube/pkg/api"
+	"gokube/pkg/storage"
 )
 
 const (

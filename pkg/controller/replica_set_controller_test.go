@@ -2,18 +2,18 @@ package controller
 
 import (
 	"context"
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/storage"
 	"fmt"
 	"os"
 	"strconv"
 	"testing"
 	"time"
 
-	"etcdtest/pkg/registry"
-
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"go.etcd.io/etcd/server/v3/embed"
+
+	"gokube/pkg/api"
+	"gokube/pkg/registry"
+	"gokube/pkg/storage"
 )
 
 var rsRegistry *registry.ReplicaSetRegistry

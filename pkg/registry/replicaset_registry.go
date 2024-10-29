@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"sync"
 
-	"etcdtest/pkg/api"
-	"etcdtest/pkg/storage"
+	"gokube/pkg/api"
+	"gokube/pkg/storage"
 )
 
 type ReplicaSetRegistry struct {

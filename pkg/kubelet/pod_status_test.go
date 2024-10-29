@@ -4,7 +4,6 @@ package kubelet
 
 import (
 	"context"
-	"etcdtest/pkg/api"
 	"testing"
 	"time"
 
@@ -12,6 +11,8 @@ import (
 	"github.com/docker/docker/client"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"gokube/pkg/api"
 )
 
 func TestGetPodStatus(t *testing.T) {

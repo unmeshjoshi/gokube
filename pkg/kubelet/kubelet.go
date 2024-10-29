@@ -4,20 +4,20 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"etcdtest/pkg/registry/names"
 	"fmt"
-	"github.com/emicklei/go-restful/v3"
 	"io"
 	"log"
 	"net/http"
 	"os"
 	"time"
 
-	"etcdtest/pkg/api"
-
 	"github.com/docker/docker/api/types/container"
 	"github.com/docker/docker/api/types/image"
 	"github.com/docker/docker/client"
+	"github.com/emicklei/go-restful/v3"
+
+	"gokube/pkg/api"
+	"gokube/pkg/registry/names"
 )
 
 type Kubelet struct {
