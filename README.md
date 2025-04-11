@@ -71,6 +71,24 @@ Install the latest version of [process-compose](https://f1bonacc1.github.io/proc
 brew install f1bonacc1/tap/process-compose
 ```
 
+### 6. Xcode and command line tools
+
+Ensure latest version of xcode and command line tools are installed
+
+### 7. Devbox
+
+Install the latest version of [devbox](https://www.jetify.com/docs/devbox/installing_devbox/) by running the following command:
+```bash
+curl -fsSL https://get.jetify.com/devbox | bash
+```
+
+### 8. Lima
+
+Install the latest version of [lima](https://lima-vm.io/docs/) by running the following command:
+```bash
+brew install lima
+```
+
 ### Running Commands
 
 Run the following command to understand what make targets can be run:
@@ -186,81 +204,79 @@ By working with this project, you will gain insights into:
 - Patterns Of Distributed Systems for design principles
 ```
 
-## Alternate options to set your Development Environment
+## Running the application
 
-To set up the development environment, there are two more options that this project supports:
+To run the application, there are two more options that this project supports:
 - `devbox`
 - `limactl`
 
 ### 1: Using devbox
 
-1. Install devbox by following the instructions [here](https://www.jetify.com/docs/devbox/installing_devbox/).
-2. Once devbox is installed, navigate to the root directory of this project and run:
+Once devbox is installed, navigate to the root directory of this project and run:
 
 ```bash
 devbox shell
 ```
 
 This will automatically install the required packages (`go`, `docker` and `colima`) and set up the environment. You can run the make commands from devbox shell.
-3. Run the following command to see the project in action:
+
 ```bash
 devbox run app
 ```
 
-# WORK-IN-PROGRESS
+### 2: Using limactl
 
-### Option 2: Using limactl
+If you prefer limactl use the following instructions:
 
-If you prefer limactl use the following instructions
-
-1. Install `limactl`:
-
-  ```bash
-  brew install lima
-  ```
-
-After installing these tools, you can proceed with the rest of the setup instructions.
+After installing limactl, you can proceed with the rest of the setup instructions.
 
 ## Managing the VM
-
-This setup uses the `workbench/debian-12.yaml` configuration and assumes you are running it on an M series MacBook. If you are using a non-M series MacBook, please ask the instructor to provide the necessary instructions.
 
 When the VM is started, it will have all the necessary tools installed, including Docker and etcd. Additionally, the path to the GoKube binary is set, allowing you to run the apiserver, controller, and kubelet directly from the VM shell.
 
 The Makefile includes commands to manage a Lima VM for running GoKube. Here are the instructions to start, stop, delete, and access the VM shell.
 
-### Starting the VMs
+### Initializing the VMs
 
-To start the VMs, run the following command:
+To initialize the VMs, run the following command:
 
 ```bash
-make start/master
-make start/worker1
+make lima/init-vms
 ```
 
-This command will start a Lima instance named `gokube` using the configuration specified in `workbench/debian-12.yaml`.
+### Start the VMs
 
-### Stopping the VM
+To start the VMs, run:
+
+```bash
+make lima/start-vms
+```
+
+### Run the application
+
+To start the processes in the master and worker VMs, run:
+
+```bash
+make lima/run
+```
+
+### Stop the VMs
 
 To stop the VMs, run:
 
 ```bash
-make stop/master
-make stop/worker1
+make lima/start-vms
 ```
 
-This command will stop the `gokube` Lima instance.
+### Cleanup
 
-### Deleting the VM
-
-To delete the VM, use:
+To cleanup use:
 
 ```bash
-make delete/master
-make delete/worker1
+make lima/cleanup
 ```
 
-This command will delete the `gokube` Lima instance.
+This command will stop the lima instances and delete them
 
 ### Accessing the VM Shell
 
@@ -269,6 +285,7 @@ To access the shell of the running VM, execute:
 ```bash
 make shell/master
 make shell/worker1
+make shell/worker2
 ```
 
-This command will open a shell in the `gokube` Lima instance, allowing you to interact with the VM directly.
+This command will open a shell for the lima instance, allowing you to interact with the VM directly.
