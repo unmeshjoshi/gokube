@@ -117,7 +117,10 @@ func waitForContainer(ctx context.Context, client *client.Client, containerName 
 
 func listContainerIDs(ctx context.Context, dockerClient *client.Client, dockerContainerName string) []string {
 	listFilters := filters.NewArgs(filters.Arg("name", dockerContainerName))
-	containers, _ := dockerClient.ContainerList(ctx, container.ListOptions{Filters: listFilters})
+	containers, err := dockerClient.ContainerList(ctx, container.ListOptions{Filters: listFilters})
+	if err != nil {
+		fmt.Printf("Failed to list containers %v\n", err)
+	}
 	containerIds := make([]string, len(containers))
 	for _, container := range containers {
 		if len(container.ID) > 0 {
