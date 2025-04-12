@@ -4,7 +4,8 @@
     "go@1.23.4",
     "docker@27.5.0",
     "colima@0.8.1",
-    "git@latest"
+    "git@latest",
+    "process-compose@latest",
   ],
   "env": {
     "PATH":         "$PATH:$PWD/bin:$HOME/go/bin",

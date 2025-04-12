@@ -219,6 +219,54 @@
           "store_path": "/nix/store/0b6vsy4fa4i4qpk1011hi6251nwdg5y8-go-1.23.4"
         }
       }
+    },
+    "process-compose@latest": {
+      "last_modified": "2025-03-11T17:52:14Z",
+      "resolved": "github:NixOS/nixpkgs/0d534853a55b5d02a4ababa1d71921ce8f0aee4c#process-compose",
+      "source": "devbox-search",
+      "version": "1.46.0",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/kq7yvcb0g6nhvy38x12545fw627jd0m5-process-compose-1.46.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/kq7yvcb0g6nhvy38x12545fw627jd0m5-process-compose-1.46.0"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/gifpg54zpgd8pwji6xdlzva182jg4l3r-process-compose-1.46.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/gifpg54zpgd8pwji6xdlzva182jg4l3r-process-compose-1.46.0"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/0x24qkcsbzs30xm118p2bw8y0hc0mca6-process-compose-1.46.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/0x24qkcsbzs30xm118p2bw8y0hc0mca6-process-compose-1.46.0"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/4fv3nllzyzpab16kkl7jk0k4l6kwsvqy-process-compose-1.46.0",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/4fv3nllzyzpab16kkl7jk0k4l6kwsvqy-process-compose-1.46.0"
+        }
+      }
     }
   }
 }
