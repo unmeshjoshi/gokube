@@ -220,6 +220,54 @@
         }
       }
     },
+    "gotestsum@latest": {
+      "last_modified": "2025-03-11T17:52:14Z",
+      "resolved": "github:NixOS/nixpkgs/0d534853a55b5d02a4ababa1d71921ce8f0aee4c#gotestsum",
+      "source": "devbox-search",
+      "version": "1.12.0-unstable-2024-09-17",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/93kwis02c81bwh382s1vdmsqp7s886fl-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/93kwis02c81bwh382s1vdmsqp7s886fl-gotestsum-1.12.0-unstable-2024-09-17"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/nhnkprky0cdz9060mjwg74m0faj3znk4-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/nhnkprky0cdz9060mjwg74m0faj3znk4-gotestsum-1.12.0-unstable-2024-09-17"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/j4x56yii1plcsbw886sdcxizv1623w7p-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/j4x56yii1plcsbw886sdcxizv1623w7p-gotestsum-1.12.0-unstable-2024-09-17"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/miiv2k7mps90l2r44iwv2g2rpvh515k5-gotestsum-1.12.0-unstable-2024-09-17",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/miiv2k7mps90l2r44iwv2g2rpvh515k5-gotestsum-1.12.0-unstable-2024-09-17"
+        }
+      }
+    },
     "process-compose@latest": {
       "last_modified": "2025-03-11T17:52:14Z",
       "resolved": "github:NixOS/nixpkgs/0d534853a55b5d02a4ababa1d71921ce8f0aee4c#process-compose",

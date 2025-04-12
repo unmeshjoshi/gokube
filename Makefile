@@ -1,12 +1,18 @@
 # Go parameters
+GOTESTSUM=gotestsum
 GOCMD=go
 GORUN=$(GOCMD) run
 GOBUILD=$(GOCMD) build
 GOCLEAN=$(GOCMD) clean
-GOTEST=$(GOCMD) test
 GOGET=$(GOCMD) get
 GOMOD=$(GOCMD) mod
 GOINSTALL=$(GOCMD) install
+
+ifeq ($(shell command -v $(GOTESTSUM) > /dev/null 2>&1; echo $$?), 0)
+	GOTEST=$(GOTESTSUM) --format testdox
+else
+	GOTEST=$(GOCMD) test -v
+endif
 
 # Make parameters
 OUT_DIR=out
@@ -47,10 +53,10 @@ lint: ## Run lint
 	docker run --rm -v $(PWD):/app -v $(PWD)/.golangci-lint-cache:/root/.cache -w /app golangci/golangci-lint:v1.63.4 golangci-lint run -v --exclude S1000
 
 test: ## Run all tests
-	$(GOTEST) -v ./...
+	$(GOTEST) ./...
 
 test/%: ## Run package level tests
-	$(GOTEST) -v ./pkg/$(@F)
+	$(GOTEST) ./pkg/$(@F)
 
 mockgen: install-mockgen ## Generate mocks using mockgen
 	PROJECT_HOME=$(PWD) go generate ./...

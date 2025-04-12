@@ -6,6 +6,7 @@
     "colima@0.8.1",
     "git@latest",
     "process-compose@latest",
+    "gotestsum@latest"
   ],
   "env": {
     "PATH":         "$PATH:$PWD/bin:$HOME/go/bin",
