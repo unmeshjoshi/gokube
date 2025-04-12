@@ -28,7 +28,7 @@ GO_BIN_TARGETS=$(addprefix $(GOPATH)/bin/,$(BINARIES))
 CYAN_COLOR_START := \033[36m
 CYAN_COLOR_END := \033[0m
 
-.PHONY: precommit mockgen install clean
+.PHONY: precommit mockgen install clean test
 
 help: ## Prints help (only for targets with comments)
 	@grep -E '^[a-zA-Z._/\-]+:.*?## ' $(MAKEFILE_LIST) | sort | awk -F'[:##]' '{printf "$(CYAN_COLOR_START)%-20s $(CYAN_COLOR_END)%s\n", $$2, $$5}'
