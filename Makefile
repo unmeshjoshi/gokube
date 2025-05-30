@@ -16,7 +16,7 @@ endif
 
 # Make parameters
 OUT_DIR=out
-BINARIES=apiserver controller kubelet scheduler
+BINARIES=apiserver controller kubelet scheduler gokube
 BINARY_PATHS=$(addprefix $(OUT_DIR)/,$(BINARIES))
 EXECUTABLES=$(addprefix $(GOPATH)/,$(BINARIES))
 
@@ -71,15 +71,16 @@ $(OUT_DIR): ## Ensure output directory exists
 	@if [ ! -d $(OUT_DIR) ]; then mkdir -p $(OUT_DIR); fi
 
 $(OUT_DIR)/%: ## Build to out directory
-	@$(GOBUILD) -o $(@) -v ./cmd/$(@F)/$(@F).go
+	@$(GOBUILD) -o $(@) -v ./cmd/$(@F)
 	@printf "Built %s\n" $(@F)
 
 build/apiserver: $(OUT_DIR)/apiserver ## Build apiserver
 build/controller: $(OUT_DIR)/controller ## Build controller
 build/kubelet: $(OUT_DIR)/kubelet ## Build kubelet
 build/scheduler: $(OUT_DIR)/scheduler ## Build scheduler
+build/gokube: $(OUT_DIR)/gokube ## Build gokube CLI
 
-build: build/apiserver build/controller build/kubelet build/scheduler ## Build all
+build: build/apiserver build/controller build/kubelet build/scheduler build/gokube ## Build all
 
 precommit: deps fmt vet lint test build ## Run precommit target(deps,fmt,vet,lint,test)
 	@echo "CI build completed successfully"
@@ -94,8 +95,9 @@ install/apiserver: $(GOPATH)/bin/apiserver ## Install apiserver in $(GOPATH)/bin
 install/controller: $(GOPATH)/bin/controller ## Install controller in $(GOPATH)/bin
 install/kubelet: $(GOPATH)/bin/kubelet ## Install kubelet in $(GOPATH)/bin
 install/scheduler: $(GOPATH)/bin/scheduler ## Install scheduler in $(GOPATH)/bin
+install/gokube: $(GOPATH)/bin/gokube ## Install gokube CLI in $(GOPATH)/bin
 
-install: install/apiserver install/controller install/kubelet install/scheduler ## Install all
+install: install/apiserver install/controller install/kubelet install/scheduler install/gokube ## Install all
 run: ### Run the project
 	process-compose -f process-compose.yml up
 

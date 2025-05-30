@@ -15,6 +15,7 @@ require (
 	go.uber.org/mock v0.5.0
 	go.uber.org/zap v1.21.0
 	google.golang.org/appengine v1.6.7
+	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

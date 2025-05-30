@@ -36,6 +36,12 @@ builds:
     env: *build_env
     goos: *build_goos
     goarch: *build_goarch
+  - id: gokube
+    binary: gokube
+    main: cmd/gokube/gokube.go
+    env: *build_env
+    goos: *build_goos
+    goarch: *build_goarch
 archives:
   - formats: [ 'tar.gz' ]
     # this name template makes the OS and Arch compatible with the results of uname.
