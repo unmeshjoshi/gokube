@@ -1,6 +1,8 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"gokube/pkg/sdk"
@@ -8,10 +10,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	// Default API server URL
+	defaultAPIServerURL = "http://localhost:8080"
+	// Environment variable name for API server URL
+	apiServerEnvVar = "GOKUBE_API_SERVER"
+)
+
 var (
 	// Global flags
-	serverURL string
-	timeout   time.Duration
+	apiServerURL string
+	timeout      time.Duration
 
 	// For testing - allows injection of mock client
 	testClient sdk.ClientInterface
@@ -25,7 +34,7 @@ func NewClient() sdk.ClientInterface {
 	}
 
 	config := sdk.Config{
-		BaseURL: serverURL,
+		BaseURL: apiServerURL,
 		Timeout: timeout,
 	}
 	return sdk.NewClient(config)
@@ -43,6 +52,12 @@ func ResetTestClient() {
 
 // AddGlobalFlags adds global flags to a command
 func AddGlobalFlags(cmd *cobra.Command) {
-	cmd.PersistentFlags().StringVar(&serverURL, "server", "http://localhost:8080", "gokube API server URL")
+	// API server URL - can be overridden by environment variable or flag
+	apiServerDefault := defaultAPIServerURL
+	if envAPIServerURL := os.Getenv(apiServerEnvVar); envAPIServerURL != "" {
+		apiServerDefault = envAPIServerURL
+	}
+
+	cmd.PersistentFlags().StringVar(&apiServerURL, "api-server", apiServerDefault, fmt.Sprintf("gokube API server URL (can be set via %s environment variable)", apiServerEnvVar))
 	cmd.PersistentFlags().DurationVar(&timeout, "timeout", 30*time.Second, "request timeout")
 }

@@ -229,6 +229,39 @@ gokube --help
 gokube get --help
 ```
 
+### API Server Configuration
+
+All GoKube CLI commands support connecting to a custom API server using either a command-line flag or an environment variable:
+
+#### Using Environment Variable (Recommended)
+
+Set the `GOKUBE_API_SERVER` environment variable to avoid specifying the API server URL with every command:
+
+```bash
+# Set the environment variable (add to your shell profile for persistence)
+export GOKUBE_API_SERVER=http://my-api-server:8080
+
+# Now all commands will use this API server URL
+gokube get pods
+gokube create pod my-pod --image nginx
+gokube apply replicaset my-rs --replicas 3
+```
+
+#### Using Command-Line Flag
+
+Alternatively, specify the API server URL for individual commands:
+
+```bash
+# Use --api-server flag for specific commands
+gokube get pods --api-server http://my-api-server:8080
+gokube create pod my-pod --api-server http://my-api-server:8080 --image nginx
+gokube delete pod my-pod --api-server http://my-api-server:8080
+```
+
+#### Default Behavior
+
+If neither the environment variable nor the flag is specified, GoKube CLI defaults to `http://localhost:8080`.
+
 ### Output Formats
 
 The CLI supports multiple output formats:
