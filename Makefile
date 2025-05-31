@@ -72,7 +72,7 @@ $(OUT_DIR): ## Ensure output directory exists
 
 $(OUT_DIR)/%: ## Build to out directory
 	@$(GOBUILD) -o $(@) -v ./cmd/$(@F)
-	@printf "Built %s\n" $(@F)
+	@printf "🔨 Built %s successfully\n" $(@F)
 
 build/apiserver: $(OUT_DIR)/apiserver ## Build apiserver
 build/controller: $(OUT_DIR)/controller ## Build controller
@@ -83,13 +83,13 @@ build/gokube: $(OUT_DIR)/gokube ## Build gokube CLI
 build: build/apiserver build/controller build/kubelet build/scheduler build/gokube ## Build all
 
 precommit: deps fmt vet lint test build ## Run precommit target(deps,fmt,vet,lint,test)
-	@echo "CI build completed successfully"
+	@echo "🎉 CI build completed successfully!"
 
 $(GO_BIN_TARGETS):
-	@printf "Installing %s...\n" $(@F)
+	@printf "📦 Installing %s...\n" $(@F)
 	@$(GOINSTALL) ./cmd/$(@F)/$(@F).go
-	@printf "Successfully installed %s\n" $(@F)
-	@printf "Executable located at %s\n\n" $(GOPATH)/bin/$(@F)
+	@printf "✅ Successfully installed %s\n" $(@F)
+	@printf "📍 Executable located at %s\n\n" $(GOPATH)/bin/$(@F)
 
 install/apiserver: $(GOPATH)/bin/apiserver ## Install apiserver in $(GOPATH)/bin
 install/controller: $(GOPATH)/bin/controller ## Install controller in $(GOPATH)/bin
@@ -105,13 +105,13 @@ clean: ## Cleans all directories
 	@$(GOCLEAN)
 	@rm -f $(BINARY_PATHS)
 	@rm -rf $(OUT_DIR)
-	@printf "Cleaned up build artifacts\n"
+	@printf "🧹 Cleaned up build artifacts\n"
 	@rm -f $(EXECUTABLES)
-	@printf "Cleaned up installed binaries\n"
+	@printf "🧹 Cleaned up installed binaries\n"
 	@rm -rf $(DIST_DIR)
-	@printf "Cleaned up dist artifacts\n"
+	@printf "🧹 Cleaned up dist artifacts\n"
 	@rm -rf $(HOME)/gokube
-	@printf "Cleaned up gokube binaries\n"
+	@printf "🧹 Cleaned up gokube binaries\n\n"
 
 include limactl.mk
 include colima.mk
