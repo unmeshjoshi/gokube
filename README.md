@@ -343,12 +343,16 @@ The SDK provides the following main interfaces:
 
 ## Current Features
 
-- Basic container management (create, start, stop)
-- Simple pod creation and management
-- Rudimentary node management
-- ReplicaSet management for maintaining desired pod replicas
-- Pod scheduling to available nodes
-- Robust etcd-based ListWatch implementation with:
+- **Container Management**: Basic container operations including create, start, and stop functionality
+- **Pod Management**: Simple pod creation and lifecycle management
+- **Node Management**: Basic node registration and management capabilities
+- **ReplicaSet Management**: Maintains desired pod replicas with automatic scaling and reconciliation
+- **Pod Scheduling**: Assigns pods to available nodes based on resource requirements
+- **ReplicaSet Controller**: Automatically maintains desired number of pod replicas with scaling, reconciliation, and failure recovery
+- **Scheduler**: Assigns pending pods to available nodes with configurable scheduling intervals
+- **Pod Status Updates**: Kubelet monitors and updates pod status periodically (every 10 seconds) based on container states
+- **Failure Handling**: ReplicaSet controller recreates failed pods on healthy nodes through reconciliation loops
+- **Robust ListWatch Implementation**: etcd-based implementation with:
   - Automatic reconnection with exponential backoff
   - Prometheus metrics for monitoring
   - Configurable retry behavior
@@ -362,11 +366,7 @@ The SDK provides the following main interfaces:
 
 The following features are planned for implementation:
 
-1. [ ] Implement ReplicationController to create a specified number of replicas of created pods
-2. [ ] Implement Scheduler to assign pods to nodes
-3. [ ] Implement PodStatus update. Nodes should update pod status periodically with the apiserver
-4. [ ] Update the ReplicationController to create newer instances of pods assigned to other nodes if a pod or node hosting the pods fails
-5. [ ] Implement a Proxy service to load balance requests across pod instances~
+1. [ ] Implement a Proxy service to load balance requests across pod instances (kube-proxy equivalent with iptables rules)
 
 ## Learning Objectives
 
