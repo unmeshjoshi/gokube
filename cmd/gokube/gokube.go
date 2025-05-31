@@ -33,6 +33,11 @@ Examples:
   gokube apply node my-node --unschedulable
   gokube apply replicaset my-rs --replicas 5
 
+  # Edit resources
+  gokube edit pod my-pod
+  gokube edit node my-node
+  gokube edit replicaset my-rs
+
   # Delete resources
   gokube delete pod my-pod
   gokube delete replicaset my-rs
@@ -45,6 +50,7 @@ Examples:
 	rootCmd.AddCommand(cmd.NewGetCommand())
 	rootCmd.AddCommand(cmd.NewCreateCommand())
 	rootCmd.AddCommand(cmd.NewApplyCommand())
+	rootCmd.AddCommand(cmd.NewEditCommand())
 	rootCmd.AddCommand(cmd.NewDeleteCommand())
 	rootCmd.AddCommand(cmd.NewScaleCommand())
 	rootCmd.AddCommand(cmd.NewVersionCommand())
