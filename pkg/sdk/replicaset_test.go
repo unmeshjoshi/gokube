@@ -30,7 +30,8 @@ func TestReplicaSetOperations(t *testing.T) {
 			}
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
-			json.NewEncoder(w).Encode(rs)
+			err = json.NewEncoder(w).Encode(rs)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/replicasets/test-rs":
 			// Get replicaset
@@ -54,7 +55,8 @@ func TestReplicaSetOperations(t *testing.T) {
 				},
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(rs)
+			err := json.NewEncoder(w).Encode(rs)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodPut && r.URL.Path == "/api/v1/replicasets/test-rs":
 			// Update replicaset
@@ -63,7 +65,8 @@ func TestReplicaSetOperations(t *testing.T) {
 			require.NoError(t, err)
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(rs)
+			err = json.NewEncoder(w).Encode(rs)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodDelete && r.URL.Path == "/api/v1/replicasets/test-rs":
 			// Delete replicaset
@@ -108,7 +111,8 @@ func TestReplicaSetOperations(t *testing.T) {
 				},
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(replicasets)
+			err := json.NewEncoder(w).Encode(replicasets)
+			require.NoError(t, err)
 
 		default:
 			w.WriteHeader(http.StatusNotFound)
@@ -213,17 +217,21 @@ func TestReplicaSetOperationsErrors(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/v1/replicasets/not-found":
 			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("ReplicaSet not found"))
+			_, err := w.Write([]byte("ReplicaSet not found"))
+			require.NoError(t, err)
 		case "/api/v1/replicasets/server-error":
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Internal server error"))
+			_, err := w.Write([]byte("Internal server error"))
+			require.NoError(t, err)
 		case "/api/v1/replicasets":
 			if r.Method == http.MethodPost {
 				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte("ReplicaSet already exists"))
+				_, err := w.Write([]byte("ReplicaSet already exists"))
+				require.NoError(t, err)
 			} else if r.Method == http.MethodGet {
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Failed to list replicasets"))
+				_, err := w.Write([]byte("Failed to list replicasets"))
+				require.NoError(t, err)
 			}
 		default:
 			w.WriteHeader(http.StatusNotFound)
@@ -271,10 +279,6 @@ func TestReplicaSetInterface(t *testing.T) {
 	// Verify that ReplicaSets() returns the expected interface
 	rsInterface := client.ReplicaSets()
 	assert.NotNil(t, rsInterface)
-
-	// Type assertion to ensure it implements ReplicaSetInterface
-	_, ok := rsInterface.(ReplicaSetInterface)
-	assert.True(t, ok, "ReplicaSets() should return an implementation of ReplicaSetInterface")
 }
 
 func TestReplicaSetScaling(t *testing.T) {
@@ -287,7 +291,8 @@ func TestReplicaSetScaling(t *testing.T) {
 
 			// Simulate scaling behavior
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(rs)
+			err = json.NewEncoder(w).Encode(rs)
+			require.NoError(t, err)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}

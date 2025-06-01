@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/sha256"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"os/exec"
 	"strings"
@@ -118,7 +117,7 @@ func runEdit(cmd *cobra.Command, args []string) error {
 
 func editLoop(cmd *cobra.Command, client sdk.ClientInterface, ctx context.Context, resourceType, resourceName string, data []byte, errorMsg string) error {
 	// Create temporary file
-	tmpFile, err := ioutil.TempFile("", fmt.Sprintf("gokube-edit-%s-%s-*.yaml", resourceType, resourceName))
+	tmpFile, err := os.CreateTemp("", fmt.Sprintf("gokube-edit-%s-%s-*.yaml", resourceType, resourceName))
 	if err != nil {
 		return fmt.Errorf("failed to create temporary file: %w", err)
 	}
@@ -164,7 +163,7 @@ func editLoop(cmd *cobra.Command, client sdk.ClientInterface, ctx context.Contex
 	}
 
 	// Read the edited content
-	editedContent, err := ioutil.ReadFile(tmpFile.Name())
+	editedContent, err := os.ReadFile(tmpFile.Name())
 	if err != nil {
 		return fmt.Errorf("failed to read edited file: %w", err)
 	}

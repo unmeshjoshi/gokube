@@ -28,7 +28,8 @@ func TestNodeOperations(t *testing.T) {
 				Status: api.NodeReady,
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(node)
+			err := json.NewEncoder(w).Encode(node)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodPut && r.URL.Path == "/api/v1/nodes/test-node":
 			// Update node
@@ -37,7 +38,8 @@ func TestNodeOperations(t *testing.T) {
 			require.NoError(t, err)
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(node)
+			err = json.NewEncoder(w).Encode(node)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/nodes":
 			// List nodes
@@ -60,7 +62,8 @@ func TestNodeOperations(t *testing.T) {
 				},
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(nodes)
+			err := json.NewEncoder(w).Encode(nodes)
+			require.NoError(t, err)
 
 		default:
 			w.WriteHeader(http.StatusNotFound)
@@ -121,14 +124,17 @@ func TestNodeOperationsErrors(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/v1/nodes/not-found":
 			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("Node not found"))
+			_, err := w.Write([]byte("Node not found"))
+			require.NoError(t, err)
 		case "/api/v1/nodes/server-error":
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Internal server error"))
+			_, err := w.Write([]byte("Internal server error"))
+			require.NoError(t, err)
 		case "/api/v1/nodes":
 			if r.Method == http.MethodGet {
 				w.WriteHeader(http.StatusInternalServerError)
-				w.Write([]byte("Failed to list nodes"))
+				_, err := w.Write([]byte("Failed to list nodes"))
+				require.NoError(t, err)
 			}
 		default:
 			w.WriteHeader(http.StatusNotFound)
@@ -166,10 +172,6 @@ func TestNodeInterface(t *testing.T) {
 	// Verify that Nodes() returns the expected interface
 	nodeInterface := client.Nodes()
 	assert.NotNil(t, nodeInterface)
-
-	// Type assertion to ensure it implements NodeInterface
-	_, ok := nodeInterface.(NodeInterface)
-	assert.True(t, ok, "Nodes() should return an implementation of NodeInterface")
 }
 
 func TestNodeStatusValues(t *testing.T) {

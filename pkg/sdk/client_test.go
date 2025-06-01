@@ -36,22 +36,16 @@ func TestClientInterfaces(t *testing.T) {
 	t.Run("PodsInterface", func(t *testing.T) {
 		podInterface := client.Pods()
 		assert.NotNil(t, podInterface)
-		_, ok := podInterface.(PodInterface)
-		assert.True(t, ok, "Pods() should return an implementation of PodInterface")
 	})
 
 	t.Run("NodesInterface", func(t *testing.T) {
 		nodeInterface := client.Nodes()
 		assert.NotNil(t, nodeInterface)
-		_, ok := nodeInterface.(NodeInterface)
-		assert.True(t, ok, "Nodes() should return an implementation of NodeInterface")
 	})
 
 	t.Run("ReplicaSetsInterface", func(t *testing.T) {
 		rsInterface := client.ReplicaSets()
 		assert.NotNil(t, rsInterface)
-		_, ok := rsInterface.(ReplicaSetInterface)
-		assert.True(t, ok, "ReplicaSets() should return an implementation of ReplicaSetInterface")
 	})
 }
 
@@ -61,10 +55,12 @@ func TestErrorHandling(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/v1/pods/not-found":
 			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("Pod not found"))
+			_, err := w.Write([]byte("Pod not found"))
+			require.NoError(t, err)
 		case "/api/v1/pods/server-error":
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Internal server error"))
+			_, err := w.Write([]byte("Internal server error"))
+			require.NoError(t, err)
 		default:
 			w.WriteHeader(http.StatusNotFound)
 		}

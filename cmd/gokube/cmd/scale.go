@@ -41,7 +41,10 @@ func NewScaleCommand() *cobra.Command {
 	AddGlobalFlags(cmd)
 	cmd.Flags().Int32Var(&scaleReplicas, "replicas", 1, "Number of replicas to scale to")
 	cmd.Flags().StringVarP(&scaleOutputFormat, "output", "o", "table", "Output format (table, json, yaml)")
-	cmd.MarkFlagRequired("replicas")
+	err := cmd.MarkFlagRequired("replicas")
+	if err != nil {
+		panic(fmt.Sprintf("Failed to mark flag required: %v", err))
+	}
 
 	return cmd
 }

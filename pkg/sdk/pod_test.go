@@ -26,7 +26,8 @@ func TestPodOperations(t *testing.T) {
 			pod.Status = api.PodPending
 			w.Header().Set("Content-Type", "application/json")
 			w.WriteHeader(http.StatusCreated)
-			json.NewEncoder(w).Encode(pod)
+			err = json.NewEncoder(w).Encode(pod)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/pods/test-pod":
 			// Get pod
@@ -38,7 +39,8 @@ func TestPodOperations(t *testing.T) {
 				Status: api.PodRunning,
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(pod)
+			err := json.NewEncoder(w).Encode(pod)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodPut && r.URL.Path == "/api/v1/pods/test-pod":
 			// Update pod
@@ -47,7 +49,8 @@ func TestPodOperations(t *testing.T) {
 			require.NoError(t, err)
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(pod)
+			err = json.NewEncoder(w).Encode(pod)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodDelete && r.URL.Path == "/api/v1/pods/test-pod":
 			// Delete pod
@@ -80,7 +83,8 @@ func TestPodOperations(t *testing.T) {
 			}
 
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(pods)
+			err := json.NewEncoder(w).Encode(pods)
+			require.NoError(t, err)
 
 		case r.Method == http.MethodGet && r.URL.Path == "/api/v1/pods/unassigned":
 			// List unassigned pods
@@ -91,7 +95,8 @@ func TestPodOperations(t *testing.T) {
 				},
 			}
 			w.Header().Set("Content-Type", "application/json")
-			json.NewEncoder(w).Encode(pods)
+			err := json.NewEncoder(w).Encode(pods)
+			require.NoError(t, err)
 
 		default:
 			w.WriteHeader(http.StatusNotFound)
@@ -188,14 +193,17 @@ func TestPodOperationsErrors(t *testing.T) {
 		switch r.URL.Path {
 		case "/api/v1/pods/not-found":
 			w.WriteHeader(http.StatusNotFound)
-			w.Write([]byte("Pod not found"))
+			_, err := w.Write([]byte("Pod not found"))
+			require.NoError(t, err)
 		case "/api/v1/pods/server-error":
 			w.WriteHeader(http.StatusInternalServerError)
-			w.Write([]byte("Internal server error"))
+			_, err := w.Write([]byte("Internal server error"))
+			require.NoError(t, err)
 		case "/api/v1/pods":
 			if r.Method == http.MethodPost {
 				w.WriteHeader(http.StatusConflict)
-				w.Write([]byte("Pod already exists"))
+				_, err := w.Write([]byte("Pod already exists"))
+				require.NoError(t, err)
 			}
 		default:
 			w.WriteHeader(http.StatusNotFound)
@@ -236,8 +244,4 @@ func TestPodInterface(t *testing.T) {
 	// Verify that Pods() returns the expected interface
 	podInterface := client.Pods()
 	assert.NotNil(t, podInterface)
-
-	// Type assertion to ensure it implements PodInterface
-	_, ok := podInterface.(PodInterface)
-	assert.True(t, ok, "Pods() should return an implementation of PodInterface")
 }
