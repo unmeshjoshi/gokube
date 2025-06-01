@@ -8,6 +8,15 @@ GOGET=$(GOCMD) get
 GOMOD=$(GOCMD) mod
 GOINSTALL=$(GOCMD) install
 
+# Linter configuration
+GOLANGCI_LINT=golangci-lint
+GOLANGCI_LINT_VERSION=v1.63.4
+ifeq ($(shell command -v $(GOLANGCI_LINT) > /dev/null 2>&1; echo $$?), 0)
+	LINT_CMD=$(GOLANGCI_LINT)
+else
+	LINT_CMD=docker run --rm -v $(PWD):/app -v $(PWD)/.golangci-lint-cache:/root/.cache -w /app golangci/golangci-lint:$(GOLANGCI_LINT_VERSION) golangci-lint
+endif
+
 ifeq ($(shell command -v $(GOTESTSUM) > /dev/null 2>&1; echo $$?), 0)
 	GOTEST=$(GOTESTSUM) --format testdox
 else
@@ -50,7 +59,9 @@ vet: ## Run SCA using go vet
 	go vet $(shell go list ./...)
 
 lint: ## Run lint
-	docker run --rm -v $(PWD):/app -v $(PWD)/.golangci-lint-cache:/root/.cache -w /app golangci/golangci-lint:v1.63.4 golangci-lint run -v --exclude S1000
+	@printf "🔨 Running lint...\n"
+	@$(LINT_CMD) run -v --exclude S1000
+	@printf "✅ Lint completed successfully\n"
 
 test: ## Run all tests
 	$(GOTEST) ./...
