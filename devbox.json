@@ -8,7 +8,8 @@
     "process-compose@latest",
     "gotestsum@latest",
     "etcd@3.5.21",
-    "golangci-lint@latest"
+    "golangci-lint@latest",
+    "gitleaks@latest"
   ],
   "env": {
     "PATH":         "$PATH:$PWD/bin:$HOME/go/bin",

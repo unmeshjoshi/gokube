@@ -93,6 +93,14 @@ build/gokube: $(OUT_DIR)/gokube ## Build gokube CLI
 
 build: build/apiserver build/controller build/kubelet build/scheduler build/gokube ## Build all
 
+lefthook/install: ## Install lefthook
+	@echo "🔨 Installing lefthook..."
+	@lefthook install
+	@echo "✅ Lefthook installed successfully!"
+
+setup: lefthook/install ## Setup the project
+	@echo "🎉 Project setup completed successfully!"
+
 precommit: deps fmt vet lint test build ## Run precommit target(deps,fmt,vet,lint,test)
 	@echo "🎉 CI build completed successfully!"
 

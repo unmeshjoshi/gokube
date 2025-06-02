@@ -1,0 +1,52 @@
+# Lefthook configuration for Go project
+# Refer to: https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  jobs:
+    - name: fmt
+      glob: "*.go"
+      run: gofmt -s -w {staged_files}
+      stage_fixed: true
+      fail_text: "🚨 Go formatting failed! Check your Go syntax and try again."
+
+    - name: vet
+      glob: "*.go"
+      run: go vet {staged_files} 2>&1 | grep -v "command-line-arguments"
+      fail_text: "⚠️  Static analysis found issues! Fix the reported problems and try again."
+
+    - name: lint
+      glob: "*.go"
+      run: golangci-lint run {staged_files}
+      fail_text: "🔍 Linting failed! Review the issues above and fix them before committing."
+
+    - name: test-staged
+      glob: "*.go"
+      run: |
+        dirs=$(echo "{staged_files}" | xargs -r -n1 dirname | sort -u | awk '{print "./"$1}' | tr '\n' ' ')
+        if [ -n "$dirs" ]; then
+          go test $dirs
+        fi
+      fail_text: "🧪 Tests failed for staged changes! Fix failing tests before committing."
+
+    - name: secrets-staged
+      run: gitleaks git --staged
+      fail_text: "🔐 Security scan failed! Secrets detected in staged files. Remove them before committing."
+
+pre-push:
+  jobs:
+    - name: full-lint-check
+      run: make lint
+      fail_text: "❌ Full lint check failed! Run 'make lint' locally to see all issues."
+
+    - name: full-tests
+      run: make test
+      fail_text: "🧪 Full test suite failed! Fix failing tests before pushing your changes."
+
+    - name: build-check
+      run: make build
+      fail_text: "🔨 Build failed! Ensure your code compiles successfully with 'make build'."
+
+    - name: secrets-full
+      run: gitleaks git
+      fail_text: "🛡️  Security scan failed! Secrets detected in git history. Clean them before pushing."
