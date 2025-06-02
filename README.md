@@ -502,3 +502,127 @@ make shell/worker2
 ```
 
 This command will open a shell for the lima instance, allowing you to interact with the VM directly.
+
+## Contributing
+
+We welcome contributions to GoKube! This section provides guidelines for developers who want to contribute to the project.
+
+### Development Setup
+
+#### Prerequisites for Contributors
+
+In addition to the basic setup requirements, contributors need:
+
+1. **Git Hooks Setup**: This project uses [lefthook](https://lefthook.dev/) for managing git hooks to ensure code quality and security.
+
+```bash
+make setup
+```
+
+This will install and configure the following hooks:
+
+**Pre-commit hooks** (fast, run on staged files):
+- **fmt**: Auto-formats Go code using `gofmt`
+- **vet**: Runs static analysis on staged Go files
+- **lint**: Runs `golangci-lint` on staged Go files
+- **test-staged**: Runs tests only for packages containing staged files
+- **secrets-staged**: Scans staged files for secrets using `gitleaks`
+
+**Pre-push hooks** (comprehensive, run before push):
+- **full-lint-check**: Runs complete lint check on entire codebase
+- **full-tests**: Runs the complete test suite
+- **build-check**: Verifies the project builds successfully
+- **secrets-full**: Scans entire git history for secrets
+
+All hooks include helpful error messages to guide you through fixing any issues.
+
+**Note**: If you prefer not to use automatic git hooks, you can skip the setup and run checks manually using `make precommit` before committing your changes.
+
+2. **Development Environment**: Use the devbox shell for consistent development environment:
+
+```bash
+devbox shell
+```
+
+#### Development Workflow
+
+1. **Fork and Clone**
+   ```bash
+   git clone https://github.com/yourusername/gokube.git
+   cd gokube
+   ```
+
+2. **Set up development environment**
+   ```bash
+   make setup  # Install git hooks
+   devbox shell  # Enter development environment
+   ```
+
+3. **Create a feature branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+
+4. **Make your changes**
+   - Write code following Go best practices
+   - Add tests for new functionality
+   - Update documentation as needed
+
+5. **Test your changes** (optional if using lefthook, as hooks will run automatically)
+   ```bash
+   make precommit  # Run all checks locally
+   make test       # Run full test suite
+   ```
+
+6. **Commit your changes**
+   ```bash
+   git add .
+   git commit -m "feat: your descriptive commit message"
+   ```
+   The pre-commit hooks will automatically run and ensure code quality.
+
+7. **Push and create PR**
+   ```bash
+   git push origin feature/your-feature-name
+   ```
+   The pre-push hooks will run comprehensive checks before pushing.
+
+### Coding Standards
+
+- **Go Style**: Follow standard Go formatting and conventions
+- **Testing**: Maintain or improve test coverage for new code
+- **Documentation**: Update relevant documentation for new features
+- **Commit Messages**: Use conventional commit format (feat:, fix:, docs:, etc.)
+- **Security**: Never commit secrets or sensitive information
+
+### Code Quality Tools
+
+The project uses several tools to maintain code quality:
+
+- **gofmt**: Code formatting
+- **go vet**: Static analysis
+- **golangci-lint**: Comprehensive linting
+- **gitleaks**: Secret detection
+- **Testing**: Comprehensive test suite
+
+### Make Targets for Development
+
+- `make setup` - Install git hooks and development tools
+- `make precommit` - Run all pre-commit checks locally
+- `make fmt` - Format code
+- `make vet` - Run static analysis
+- `make lint` - Run linter
+- `make test` - Run tests
+- `make build` - Build all binaries
+- `make clean` - Clean workspace
+
+### Submitting Changes
+
+1. Ensure all tests pass and hooks succeed
+2. Update documentation if needed
+3. Create a pull request with:
+   - Clear description of changes
+   - References to related issues
+   - Test coverage for new features
+
+Thank you for contributing to GoKube!
